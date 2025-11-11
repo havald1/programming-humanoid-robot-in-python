@@ -32,6 +32,7 @@ class AngleInterpolationAgent(PIDAgent):
                  sync_mode=True):
         super(AngleInterpolationAgent, self).__init__(simspark_ip, simspark_port, teamname, player_id, sync_mode)
         self.keyframes = ([], [], [])
+        self.start_time = None
 
     def think(self, perception):
         target_joints = self.angle_interpolation(self.keyframes, perception)
@@ -42,8 +43,34 @@ class AngleInterpolationAgent(PIDAgent):
     def angle_interpolation(self, keyframes, perception):
         target_joints = {}
         # YOUR CODE HERE
+        names, times, keys = keyframes
+
+        if not names:
+            return target_joints
+        if self.start_time is None:
+            self.start_time = perception.time
+        relative_time = perception.time - self.start_time
+
+        for i, joints in enumerate(names):
+            jframes = keys[i]
+            jtimes = times[i]
+
+            if not jtimes:
+                continue
+            
+            angle, prev_handle, next_handle = [], [] , []
+            for j in jframes:
+
+
+            
+
 
         return target_joints
+
+def bezier_interpolation(i, p0, p1, p2, p3):
+    return (((1-i)**3) * p0) + (3 * ((1- i)**2) * i * p1)+ (3 * (1- i) * (i**2) * p2) + ((i**3) * p3)  
+
+
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()
