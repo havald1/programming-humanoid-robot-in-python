@@ -7,6 +7,7 @@
 
 
 from recognize_posture import PostureRecognitionAgent
+from keyframes import rightBackToStand, rightBellyToStand, leftBackToStand, leftBellyToStand
 
 
 class StandingUpAgent(PostureRecognitionAgent):
@@ -17,7 +18,19 @@ class StandingUpAgent(PostureRecognitionAgent):
     def standing_up(self):
         posture = self.posture
         # YOUR CODE HERE
-
+        if posture in ("Stand", "StandInit", "unknown"):
+            return
+        self.start_time = None
+        if posture == "Back":
+            self.keyframes = rightBackToStand()
+        elif posture == "Belly":
+            self.keyframes = rightBellyToStand()
+        # elif posture == "Left":
+        #     self.keyframes = leftBackToStand()
+        # elif posture == "Right":
+        #     self.keyframes = rightBackToStand()
+        # elif posture == "Frog":
+        #     self.keyframes = rightBackToStand()
 
 class TestStandingUpAgent(StandingUpAgent):
     '''this agent turns off all motor to falls down in fixed cycles
