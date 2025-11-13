@@ -35,10 +35,12 @@ class PIDController(object):
         self.e2 = np.zeros(size)
         # ADJUST PARAMETERS BELOW
         delay = 0
-        self.Kp = 9
-        self.Ki = 0.3
-        self.Kd = 0.2
-        self.y = deque(np.zeros(size), maxlen=delay + 1)
+        # could not use pid_test it will freez and the robot will disapear
+        self.Kp = 4.0
+        self.Ki = 0.0
+        self.Kd = 0.1
+        #self.y = deque(np.zeros(size), maxlen=delay + 1)
+        self.y = deque(maxlen=delay + 1)
 
     def set_delay(self, delay):
         '''
@@ -53,12 +55,14 @@ class PIDController(object):
         @return control signal
         '''
         # YOUR CODE HERE
-        prediction = sensor + self.u * self.dt
-
+        #prediction = sensor + self.u * self.dt
+        if len(self.y) == 0:
+            self.y.append(sensor.copy())
+        prediction = self.y[0]
         error = target - prediction
         tmp_1 = self.u
         tmp_2 = (self.Kp + self.Ki * self.dt + (self.Kd / self.dt)) * error
-        tmp_3 = (self.Kp + ((2 * self.Kd) / (self.dt))) * self.e1
+        tmp_3 = (self.Kp + ((2.0 * self.Kd) / (self.dt))) * self.e1
         tmp_4 = ((self.Kd)/ (self.dt)) * self.e2
 
         self.u = tmp_1 + tmp_2 - tmp_3 + tmp_4
@@ -66,9 +70,11 @@ class PIDController(object):
         self.e2 = self.e1
         self.e1 = error
 
+        max_speed = 4.0
+        self.u = np.clip(self.u, -max_speed, max_speed)
+
         y_next = sensor + self.u * self.dt
         self.y.append(y_next)
-
         return self.u
 
 
@@ -94,11 +100,20 @@ class PIDAgent(SparkAgent):
         target_angles = np.asarray([self.target_joints.get(joint_id, 
             perception.joint[joint_id]) for joint_id in JOINT_CMD_NAMES])
         u = self.joint_controller.control(target_angles, joint_angles)
+
+        joint_list = list(JOINT_CMD_NAMES.keys())
+        idx = joint_list.index("LHipPitch")
+        print(f"[PID] LHipPitch target={target_angles[idx]:.3f} "
+              f"current={joint_angles[idx]:.3f}"
+              f"speed={u[idx]:.3f}"
+              f"error={target_angles[idx] - joint_angles[idx]:.3f}")
+
+
         action.speed = dict(zip(JOINT_CMD_NAMES.keys(), u))  # dict: joint_id -> speed
         return action
 
 
 if __name__ == '__main__':
     agent = PIDAgent()
-    agent.target_joints['HeadYaw'] = 1.0
+    agent.target_joints['LHipPitch'] = 1.0
     agent.run()

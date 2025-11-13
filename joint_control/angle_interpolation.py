@@ -95,6 +95,9 @@ class AngleInterpolationAgent(PIDAgent):
             p0, p1, p2, p3 = self.control_points(a0, a1, next_hendler_0, prev_hendle_1)
 
             Bezier = self.bezier_interpolation(normalisied_time, p0, p1, p2, p3)
+            # if joint_name == "LHipPitch":
+            #     print(f"[Bezier] t={relative_time:.2f} seg ={tmp} u={normalisied_time:.2f}"
+            #           f"p0={p0:.3f} p1={p1:.3f} p2={p2:.3f} p3={p3:.3f} angle={Bezier:.3f}")
 
             target_joints[joint_name] = Bezier
 
@@ -105,3 +108,8 @@ if __name__ == '__main__':
     agent = AngleInterpolationAgent()
     agent.keyframes = rightBackToStand()  # CHANGE DIFFERENT KEYFRAMES
     agent.run()
+    
+    #from keyframes import leftBellyToStand
+    # agent = AngleInterpolationAgent()
+    # agent.keyframes = leftBellyToStand()
+    # agent.run()
