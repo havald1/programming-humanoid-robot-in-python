@@ -11,7 +11,11 @@
 
 
 from angle_interpolation import AngleInterpolationAgent
-from keyframes import hello
+#from keyframes import hello
+from keyframes import hello, leftBackToStand, leftBellyToStand, rightBackToStand, rightBellyToStand, wipe_forehead
+import pickle
+import numpy as np
+import os
 
 
 class PostureRecognitionAgent(AngleInterpolationAgent):
@@ -22,7 +26,17 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
                  sync_mode=True):
         super(PostureRecognitionAgent, self).__init__(simspark_ip, simspark_port, teamname, player_id, sync_mode)
         self.posture = 'unknown'
-        self.posture_classifier = None  # LOAD YOUR CLASSIFIER
+        base_dir = os.path.dirname(__file__)
+        path = os.path.join(base_dir, "robot_pose.pkl")
+
+        #self.posture_classifier = None  # LOAD YOUR CLASSIFIER
+        with open(path, "rb") as f:
+            self.posture_classifier = pickle.load(f)
+        self.class_names = ['Back', 'Belly', 'Crouch', 'Frog', 'HeadBack', 'Knee', 'Left', 'Right', 'Sit', 'Stand', 'StandInit']
+
+
+        #print("Typ:", type(self.posture_classifier))
+
 
     def think(self, perception):
         self.posture = self.recognize_posture(perception)
@@ -31,7 +45,23 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
     def recognize_posture(self, perception):
         posture = 'unknown'
         # YOUR CODE HERE
+        joint = ['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch']
+        try:
+            joint_val = [perception.joint[name] for name in joint]
+        except Exception:
+            return posture
+        
+        Angle_X, Angle_Y = perception.imu
+        feature = joint_val + [Angle_X, Angle_Y]
+        tmp = np.array(feature, dtype=float).reshape(1, -1)
+        
+        lable = int(self.posture_classifier.predict(tmp)[0])
+        if 0 <= lable < len(self.class_names):
+            posture = self.class_names[lable]
+        else:
+            posture = 'unknown'
 
+        #print("Predicted label:", lable, "posture:", posture)
         return posture
 
 if __name__ == '__main__':
