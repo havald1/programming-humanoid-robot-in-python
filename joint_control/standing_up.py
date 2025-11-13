@@ -12,8 +12,9 @@ from keyframes import rightBackToStand, rightBellyToStand, leftBackToStand, left
 
 class StandingUpAgent(PostureRecognitionAgent):
     def think(self, perception):
+        self.posture = self.recognize_posture(perception)
         self.standing_up()
-        return super(StandingUpAgent, self).think(perception)
+        return super(PostureRecognitionAgent, self).think(perception)
 
     def standing_up(self):
         posture = self.posture

@@ -60,7 +60,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
             posture = self.class_names[lable]
         else:
             posture = 'unknown'
-
+        #print(self.posture_classifier)
         #print("Predicted label:", lable, "posture:", posture)
         return posture
 
