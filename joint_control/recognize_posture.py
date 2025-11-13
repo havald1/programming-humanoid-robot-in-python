@@ -35,7 +35,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
         self.class_names = ['Back', 'Belly', 'Crouch', 'Frog', 'HeadBack', 'Knee', 'Left', 'Right', 'Sit', 'Stand', 'StandInit']
 
 
-        print("Typ:", type(self.posture_classifier))
+        #print("Typ:", type(self.posture_classifier))
 
 
     def think(self, perception):
@@ -61,7 +61,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
         else:
             posture = 'unknown'
 
-        print("Predicted label:", lable, "posture:", posture)
+        #print("Predicted label:", lable, "posture:", posture)
         return posture
 
 if __name__ == '__main__':

@@ -75,8 +75,7 @@ class AngleInterpolationAgent(PIDAgent):
 
             if not time_list:
                 continue
-            #target_joints['RHipYawPitch'] = target_joints['LHipYawPitch'] # copy missing joint in keyframes
-        
+            
             if relative_time <= time_list[0]: #vor erstem Keyframe
                 target_joints[joint_name] = key_list[0][0]
                 continue
