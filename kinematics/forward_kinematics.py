@@ -141,6 +141,9 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
                 # YOUR CODE HERE
                 T = T @ Tl # matrix multiplication
                 self.transforms[joint] = T
+            
+        print("HeadYaw T:", self.transforms["HeadYaw"])
+        print("LAnkleRoll T:", self.transforms["LAnkleRoll"])
 
 if __name__ == '__main__':
     agent = ForwardKinematicsAgent()
