@@ -103,10 +103,10 @@ class PIDAgent(SparkAgent):
 
         joint_list = list(JOINT_CMD_NAMES.keys())
         idx = joint_list.index("LHipPitch")
-        print(f"[PID] LHipPitch target={target_angles[idx]:.3f} "
-              f"current={joint_angles[idx]:.3f}"
-              f"speed={u[idx]:.3f}"
-              f"error={target_angles[idx] - joint_angles[idx]:.3f}")
+        # print(f"[PID] LHipPitch target={target_angles[idx]:.3f} "
+        #       f"current={joint_angles[idx]:.3f}"
+        #       f"speed={u[idx]:.3f}"
+        #       f"error={target_angles[idx] - joint_angles[idx]:.3f}")
 
 
         action.speed = dict(zip(JOINT_CMD_NAMES.keys(), u))  # dict: joint_id -> speed
